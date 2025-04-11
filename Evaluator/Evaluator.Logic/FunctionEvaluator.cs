@@ -11,18 +11,31 @@ public class FunctionEvaluator
     private static double Calculate(string postfix)
     {
         var stack = new Stack<double>();
+        var number = string.Empty;
+        var InsideNumber = false;
+
         foreach (var item in postfix)
         {
-            if (IsOperator(item))
+            if (item == '[')
+            {
+                InsideNumber = true;
+                number = string.Empty;
+            }
+            else if (item == ']')
+            {
+                InsideNumber = false ;
+                stack.Push(double.Parse(number));
+            }
+            else if (InsideNumber)
+            {
+                number += item;
+            }
+            else if (IsOperator(item))
             {
                 var operator2 = stack.Pop();
                 var operator1 = stack.Pop();
                 stack.Push(Result(operator1, item, operator2));
-            }
-            else
-            {
-                stack.Push(char.GetNumericValue(item));
-            }
+            }           
         }
         return stack.Pop();
     }
@@ -44,10 +57,23 @@ public class FunctionEvaluator
     {
         var stack = new Stack<char>();
         var postfix = string.Empty;
+        var number = string.Empty;
+
         foreach (var item in infix)
         {
-            if (IsOperator(item))
+            if (char.IsDigit(item) || item == '.')
             {
+                number += item;
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(number))
+                {
+                    postfix += "[" + number + "]";
+                    number = string.Empty;
+                }
+            }  if (IsOperator(item))
+               {
                 if (stack.Count == 0)
                 {
                     stack.Push(item);
@@ -81,13 +107,17 @@ public class FunctionEvaluator
                 postfix += item;
             }
         }
-        do
+        if (!string.IsNullOrEmpty(number))
+        {
+            postfix += "[" + number + "]";
+        }
+        while (stack.Count > 0)
         {
             postfix += stack.Pop();
-        } while (stack.Count > 0);
+        }
         return postfix;
     }
-
+     
     private static int PriorityStack(char item)
     {
         return item switch
