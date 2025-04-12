@@ -35,7 +35,7 @@ public class FunctionEvaluator
                 var operator2 = stack.Pop();
                 var operator1 = stack.Pop();
                 stack.Push(Result(operator1, item, operator2));
-            }           
+            }
         }
         return stack.Pop();
     }
@@ -72,8 +72,9 @@ public class FunctionEvaluator
                     postfix += "[" + number + "]";
                     number = string.Empty;
                 }
-            }  if (IsOperator(item))
-               {
+            }  
+            if (IsOperator(item))
+            {
                 if (stack.Count == 0)
                 {
                     stack.Push(item);
@@ -117,7 +118,7 @@ public class FunctionEvaluator
         }
         return postfix;
     }
-     
+
     private static int PriorityStack(char item)
     {
         return item switch
